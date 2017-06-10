@@ -30,7 +30,7 @@ Installation--------->yum install docker-io
 - 其他命令 — docker [info|version]
 
 
-##使用网络
+# 使用网络
 -----------
 容器中可以运行一些网络应用，要让外部也可以访问这些应用，可以通过 -P 或 -p 参数来指定端口映射。
 当使用 -P 标记时，Docker 会随机映射一个 49000~49900 的端口到内部容器开放的网络端口。
@@ -61,4 +61,8 @@ $ sudo docker run -d -p 127.0.0.1:5000:5000/udp training/webapp python app.py
 reference
 - https://yeasy.gitbooks.io/docker_practice/content/network/port_mapping.html
 - http://kuga.me/2016/07/22/docker-redis-cluster/
+
+docker ps 查询本地运行哪些镜像
+netstat -na |grep 8080 查询8080有木有被监听
+
 Happy Writing!
