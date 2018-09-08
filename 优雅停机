@@ -1,0 +1,66 @@
+###优雅关机思路及代码实现
+1. `如何知道退出JVM?`
+2. `如何阻止Daemon的线程在JVM退出后被杀掉？`
+3. `如果Worker线程处于阻塞状态，则如何唤醒并退出？`
+
+####代码实现
+ protected void initGracefullyShutdown() {
+ 
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+        public void run(){
+        
+            shutdownGracefully();
+        
+        }
+        });
+ 
+ 
+ public void shutdownGracefully(){
+     status = Status.STOPPING;
+     
+     shutdownThreadPool(streamThreadPool,"main-pool");
+     
+     if(isSharedAsyncThreadPool){
+     shutdownThreadPool(sharedAsyncThreadPool,"shared-async-pool");
+     
+     else
+        for(AbstractMessageTask task :tasks){
+        task.shutdown();
+        
+        }
+        
+        if(consumerConnector != null){
+        consumerConnector.shutdown();
+        }
+        status = Status.STOPPED;
+     
+     }
+ 
+ }
+ 
+ 
+ private void shutdownThreadPool(ExecutorService threadPool,String alias){
+ 
+    threadPool.shutdown();
+    try{
+    if(!threadPool.awaitTermination(60,TimeUnit.SECONDS)){
+    
+    threadPool.shutdownNow();
+    
+    if(!threadPool.awaitTermination(60,TimeUnit.SECONDS)){
+     logger.info()
+    }
+    
+    }
+    
+    }catch(Exception e ){
+    threadPool.shutdownNow();
+    Thread.currentThread().interrupt();
+    
+    }
+ 
+ 
+ }
+ 
+ 
+ }
